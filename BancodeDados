@@ -1,0 +1,83 @@
+delimiter //
+CREATE PROCEDURE SP_listar_pedidos_repeat()
+BEGIN
+DECLARE contador INT DEFAULT 1;
+DECLARE total_pedidos INT;
+SELECT COUNT(*) INTO total_pedidos FROM orders;
+REPEAT
+	SELECT OrderID, OrderDate
+	FROM orders LIMIT contador, 1;
+	SET contador = contador + 1;
+	UNTIL contador > total_pedidos
+END REPEAT;
+END;
+//
+call SP_listar_pedidos_repeat() 
+-------------------------------------------------------
+-- procedure simples com laços e sem consulta
+-- a procedure permitira a entrada de um valor;
+-- o que a procedure fara?
+-- ira repetir um print, começando do 1 até o valor do pare=ametro de entrada.
+-------------------------------------------------------
+
+-- procedure com laços;
+delimiter //
+	create procedure sp_testaLaco(Total int)
+    begin
+		declare contador int;
+        set contador = 1;
+        while contador <= total   do 
+				select ' o contador vale', contador;
+                set contador = contador + 1 ;
+			end while;
+    end;
+    //  
+    call sp_testaLaco(100);
+-----------------------------------------------------------
+    -- Laço loop
+delimiter //
+CREATE PROCEDURE listar_pedidos_loop()
+BEGIN DECLARE contador INT DEFAULT 1;
+DECLARE total_pedidos INT;
+SELECT COUNT(*) INTO total_pedidos FROM orders;
+repetir: LOOP
+IF contador > total_pedidos THEN
+LEAVE repetir;
+	END IF;
+		SELECT OrderID, OrderDate
+		FROM orders LIMIT contador, 1;
+		SET contador = contador + 1;
+	END LOOP;
+END;
+//
+call listar_pedidos_loop;
+------------------------------------------------------------------------------
+delimiter //
+CREATE PROCEDURE SP_contar_produtos_categoria_2(IN categoria_id INT)
+BEGIN
+	SELECT 'Existem', COUNT(*), 'para essa categoria' 
+    from products
+	WHERE CategoryID = categoria_id;
+END;
+//
+-- Chamada da procedure
+	call SP_contar_produtos_categoria_2(2);
+
+-------------------------------------------------------
+ delimiter //
+ CREATE PROCEDURE SP_atualizar_estoque(INOUT produto_id INT, IN
+quantidade_adicional INT)
+BEGIN
+	UPDATE products SET UnitsInStock = UnitsInStock + quantidade_adicional
+	WHERE ProductID = produto_id;
+
+	SELECT UnitsInStock INTO produto_id FROM products
+	WHERE ProductID = produto_id;
+END;
+//
+-- Chamada do exemplo INOUT:
+SET @produto_id = 10;
+CALL atualizar_estoque(@produto_id, 5);
+SELECT @produto_id;
+
+call SP_atualizar_estoque(2);
