@@ -1,0 +1,68 @@
+-- E uma procedure, mas so é chamada de acordo com a programação automatica dela.
+-- o update pega as variaves e traz para  novas variaveis.
+-- Eles funcionam como “gatilhos” que disparam uma ação sempre que ocorre uma operação de INSERT, UPDATE ou DELETE em uma tabela.
+-- trigger é silenciosa, ela se auto chama.
+-- posso fazer um comando de quando alguem apagar um produto e posso fazer q a trigger faz um comando q quando eu apagar, mostre q so mudou o status.
+-- Um banco pode ser monitorado atravez das triggers, quem logou, quem fez, quando fez, que maquina.
+
+create table tub_audit
+(codAudit int primary key auto_increment,
+acao_Audit varchar(20),
+hostname varchar(20),
+loginAudit varchar(20),
+DataAudit datetime,
+IdObj int
+);
+
+ALTER TABLE TAB_AUDIT ADD COLUMN UNITPRICE DEC(10,2);
+ALTER TABLE TAB_AUDIT ADD COLUMN UNITPRICENOVO DEC(10,2); -- atualiza o valor do produto
+
+delimiter //
+create trigger TR_audit_prod
+after update on products 
+for each row
+begin
+     insert into tab_audit(acao_Audit, hostname, loginAudit, DataAudit, IdObj,
+                       UNIPRACE, UNIPRACENOVO)
+     values('UPDATE', @@HOSTNAME, @@server_id, NOW(), OLD.PRODUCT_ID,
+              OLD.UNITPRICE, NEW.UNITPRACENOVO); 
+end;
+//
+
+select from PRODUCTS
+where PRODUCTID = 1
+---------------------------------------------------------------------
+
+UPDATE PRODUCTS 
+SET UNIPRACE = 50 -- atualiza o valor do produto
+WHERE PRODUCTID = 1
+---------------------------------------------------------------------
+
+-- APARGAR TRIGGER
+DROP TRIGGER TR_audit_prod;
+---------------------------------------------------------------------
+
+-- EXERCÍCIO 
+-- criar uma TRIGGER de nome TR_audit_ins_prod que realize a auditoria de todos os inserts na tabela de products realizando o insert na tabela audit
+
+delimiter //
+create trigger TR_audit_ins_prod
+after insert on products -- inserindo na tabela pruduto
+for each row
+begin
+    insert into tab_audit(acao_Audit, hostname, loginAudit, DataAudit, IdObj,
+                       UNIPRACE, UNIPRACENOVO)
+	values ('INSERT', @@HOSTNAME, CURRENT_USER(),
+    NOW(), LAST_INSERT_ID(), OLD.UNITPRICE, NEW.UNITPRACENOVO); 
+    
+    end;
+    //
+    
+select * from PRODUCTS;
+
+INSERT INTO PRODUCTS IPRODUCTNAME, SUPPLIERID, CATEGORYID,
+           QUANTITYPERUNIT, UNITPRICE, UNITSINSTOCK, UNITSONODER,
+           REORDERLEVEL, DISCONTINUERD)
+           
+VALUES ('PRODUTO DO MAURICIO', 1,1,'CAIXA', 1000,100,0,10,0,);
+     
