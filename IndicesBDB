@@ -1,0 +1,23 @@
+-- INDICES
+
+use northwind; -- pesquisando na northwind
+show indexes from employees;
+
+select * from employees
+where firstName like 'Andrew%'; -- like serve para pegar parte do nome
+
+create index idx_firstName on employees(firstName);
+
+select * 
+from products 
+where productid = 45;
+
+show indexes from products;
+
+create fulltext index idx_full_productname_quantit_qtd
+on products(producname,
+
+SELECT * FROM products WHERE MATCH(productName, QuantifyPerUnit)
+AGAINST('tofu')
+
+-- Qual Logoritmo de 2024, de qualquer numero que eu passar ele vai me passar o resultado.
